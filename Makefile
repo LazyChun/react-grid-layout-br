@@ -12,7 +12,7 @@ MIN_MAP = $(DIST)/react-grid-layout.min.js.map
 .PHONY: test dev lint build clean install link
 
 
-build: clean build-js $(MIN)
+# build: clean build-js $(MIN)
 
 clean:
 	rm -rf $(BUILD) $(DIST)
