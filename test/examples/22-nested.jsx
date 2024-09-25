@@ -26,9 +26,9 @@ const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 export default class ShowcaseLayout extends React.Component<Props, State> {
   static defaultProps: Props = {
     className: "layout",
-    rowHeight: 30,
+    rowHeight: 16,
     onLayoutChange: function() {},
-    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+    cols:{ lg: 24, md: 24, sm: 24, xs: 24 }
   };
 
   state: State = {
@@ -46,13 +46,13 @@ export default class ShowcaseLayout extends React.Component<Props, State> {
   generateDOM(): ReactChildren {
     return _.map(this.state.layouts.lg, function(l, i) {
       return (
-        <div key={i} className={l.static ? "static" : ""}>
-          {l.static ? (
+        <div key={i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
+          {l.isLayout ? (
             <span
               className="text"
-              title="This item is static and cannot be removed or resized."
+              title="This item is layout and cannot be removed or resized."
             >
-              Static - {i}
+              Layout - {i}
             </span>
           ) : (
             <span className="text">{i}</span>
@@ -121,17 +121,25 @@ export default class ShowcaseLayout extends React.Component<Props, State> {
 }
 
 function generateLayout(resizeHandles) {
-  return _.map(_.range(0, 25), function(item, i) {
+  const layouts = _.map(_.range(0, 5), function(item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
+    // 是否是内嵌的layout
+    const isLayout = Math.random() < 0.05;
     return {
       x: Math.round(Math.random() * 5) * 2,
       y: Math.floor(i / 6) * y,
-      w: 2,
-      h: y,
+      w: isLayout ? 8 : 4,
+      h:  isLayout ?y*8: y*2,
       i: i.toString(),
+      isLayout: isLayout,
       resizeHandles
     };
   });
+  // 保证至少有一个是layout
+  if(layouts.find(item=>item.isLayout)) {
+    return layouts
+  }
+  return generateLayout(resizeHandles)
 }
 
 if (process.env.STATIC_EXAMPLES === true) {
