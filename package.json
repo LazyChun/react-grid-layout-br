@@ -11,7 +11,7 @@
     "build-example": "make build-example",
     "view-example": "make view-example",
     "mdev": "make dev",
-    "start": "webpack serve --config webpack-dev-server.config.js --hot --progress",
+    "start": "webpack serve --config webpack-dev-server.config.js",
     "prepublishOnly": "make build",
     "validate": "npm ls",
     "flow": "flow",

@@ -103,7 +103,7 @@ export default class ShowcaseLayout extends React.Component<Props, State> {
     // eslint-disable-next-line no-unused-vars
     return (
       <div>
-        <h1>case for Nested</h1>
+        <h1>Case For Nested</h1>
         <ResponsiveReactGridLayout
           {...this.props}
           layouts={this.state.layouts}
@@ -124,12 +124,12 @@ function generateLayout(resizeHandles) {
   const layouts = _.map(_.range(0, 5), function(item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
     // 是否是内嵌的layout
-    const isLayout = Math.random() < 0.05;
+    const isLayout = Math.random() < 0.4;
     return {
       x: Math.round(Math.random() * 5) * 2,
       y: Math.floor(i / 6) * y,
       w: isLayout ? 8 : 4,
-      h:  isLayout ?y*8: y*2,
+      h:  isLayout ?y*4: y*2,
       i: i.toString(),
       isLayout: isLayout,
       resizeHandles
