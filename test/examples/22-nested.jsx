@@ -23,7 +23,7 @@ type State = {|
 
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
-export default class ShowcaseLayout extends React.Component<Props, State> {
+export default class NestedLayout extends React.Component<Props, State> {
   static defaultProps: Props = {
     className: "layout",
     rowHeight: 16,
@@ -143,5 +143,5 @@ function generateLayout(resizeHandles) {
 }
 
 if (process.env.STATIC_EXAMPLES === true) {
-  import("../test-hook.jsx").then(fn => fn.default(ShowcaseLayout));
+  import("../test-hook.jsx").then(fn => fn.default(NestedLayout));
 }
