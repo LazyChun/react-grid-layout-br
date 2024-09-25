@@ -1,6 +1,7 @@
 "use strict";
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -30,6 +31,9 @@ module.exports = {
       "process.env": {
         NODE_ENV: JSON.stringify("development")
       }
+    }),
+    new HtmlWebpackPlugin({
+      template: "./index-dev.html"
     })
   ],
   devtool: "eval",
