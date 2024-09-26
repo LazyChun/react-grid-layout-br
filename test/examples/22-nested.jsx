@@ -3,19 +3,18 @@ import * as React from "react";
 import _ from "lodash";
 import Responsive from '../../lib/ResponsiveReactGridLayout';
 import WidthProvider from '../../lib/components/WidthProvider';
-import type {CompactType, Layout, LayoutItem, ReactChildren} from '../../lib/utils';
+import type {Layout, LayoutItem, ReactChildren} from '../../lib/utils';
 import type {Breakpoint, OnLayoutChangeCallback} from '../../lib/responsiveUtils';
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 type Props = {|
   className: string,
-  cols: {[string]: number},
   onLayoutChange: Function,
   rowHeight: number,
 |};
 type State = {|
   currentBreakpoint: string,
-  compactType: CompactType,
+  
   mounted: boolean,
   resizeHandles: string[],
   layouts: {[string]: Layout}
@@ -23,20 +22,26 @@ type State = {|
 
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
+// 默认布局
+const DEFAULT_LAYOUTS = [
+  {i:'item1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
+  {i:'layout1',x:4,y:0,w:8,h:10,isLayout:true,resizeHandles:'se'},
+  {i:'layout2',x:12,y:0,w:8,h:12,isLayout:true,resizeHandles:'se'},
+  {i:'item2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
+  {i:'item3',x:0,y:5,w:4,h:4,resizeHandles:'se'}
+];
+
+
 export default class NestedLayout extends React.Component<Props, State> {
   static defaultProps: Props = {
-    className: "layout",
-    rowHeight: 16,
     onLayoutChange: function() {},
-    cols:{ lg: 24, md: 24, sm: 24, xs: 24 }
   };
 
   state: State = {
     currentBreakpoint: "lg",
-    compactType: "vertical",
     resizeHandles: ['se'],
     mounted: false,
-    layouts: { lg: generateLayout(['se']) }
+    layouts:DEFAULT_LAYOUTS
   };
 
   componentDidMount() {
@@ -44,9 +49,9 @@ export default class NestedLayout extends React.Component<Props, State> {
   }
 
   generateDOM(): ReactChildren {
-    return _.map(this.state.layouts.lg, function(l, i) {
+    return _.map(this.state.layouts, function(l, i) {
       return (
-        <div key={i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
+        <div key={l.i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
           {l.isLayout ? (
             <span
               className="text"
@@ -68,30 +73,22 @@ export default class NestedLayout extends React.Component<Props, State> {
     });
   };
 
-  onCompactTypeChange: () => void = () => {
-    const { compactType: oldCompactType } = this.state;
-    const compactType =
-      oldCompactType === "horizontal"
-        ? "vertical"
-        : oldCompactType === "vertical"
-        ? null
-        : "horizontal";
-    this.setState({ compactType });
-  };
+
 
   onResizeTypeChange: () => void = () => {
     const resizeHandles = this.state.resizeHandles === availableHandles ? ['se'] : availableHandles;
-    this.setState({resizeHandles, layouts: {lg: generateLayout(resizeHandles)}});
+    this.setState({resizeHandles, layouts: this.generateLayout(resizeHandles)});
   };
 
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
-    this.props.onLayoutChange(layout, layouts);
+     console.log("layouts=======00000",layout)
+     this.props.onLayoutChange(layout, layouts);
   };
 
   onNewLayout: EventHandler = () => {
     this.setState({
-      layouts: { lg: generateLayout(this.state.resizeHandles) }
+      layouts: this.generateLayout(this.state.resizeHandles)
     });
   };
 
@@ -99,14 +96,33 @@ export default class NestedLayout extends React.Component<Props, State> {
     alert(`Element parameters: ${JSON.stringify(elemParams)}`);
   };
 
+ generateLayout() {
+    const layouts = _.map(this.state.layouts, function(item, i) {
+      return {
+        x: item.x,
+        y: item.y,
+        w: item.w,
+        h: item.h,
+        i: item.i,
+        isLayout:item.isLayout,
+        resizeHandles:['se']
+      };
+    });
+    return layouts
+  }
+
   render(): React.Node {
+
     // eslint-disable-next-line no-unused-vars
     return (
       <div>
         <h1>Case For Nested</h1>
         <ResponsiveReactGridLayout
-          {...this.props}
-          layouts={this.state.layouts}
+          className="layout"
+          rowHeight={16}
+          cols={{ lg: 24, md: 24, sm: 24, xs: 24,xxs:24 }}
+          style={{height:'100vh'}}
+          layouts={{ lg: this.generateLayout(), md:this.generateLayout(), sm: this.generateLayout(), xs: this.generateLayout(), xxs: this.generateLayout() }}
           onBreakpointChange={this.onBreakpointChange}
           onLayoutChange={this.onLayoutChange}
           onDrop={this.onDrop}
@@ -120,27 +136,7 @@ export default class NestedLayout extends React.Component<Props, State> {
   }
 }
 
-function generateLayout(resizeHandles) {
-  const layouts = _.map(_.range(0, 5), function(item, i) {
-    var y = Math.ceil(Math.random() * 4) + 1;
-    // 是否是内嵌的layout
-    const isLayout = Math.random() < 0.4;
-    return {
-      x: Math.round(Math.random() * 5) * 2,
-      y: Math.floor(i / 6) * y,
-      w: isLayout ? 8 : 4,
-      h:  isLayout ?y*4: y*2,
-      i: i.toString(),
-      isLayout: isLayout,
-      resizeHandles
-    };
-  });
-  // 保证至少有一个是layout
-  if(layouts.find(item=>item.isLayout)) {
-    return layouts
-  }
-  return generateLayout(resizeHandles)
-}
+
 
 if (process.env.STATIC_EXAMPLES === true) {
   import("../test-hook.jsx").then(fn => fn.default(NestedLayout));
