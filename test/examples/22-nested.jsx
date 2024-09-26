@@ -24,11 +24,11 @@ const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 
 // 默认布局
 const DEFAULT_LAYOUTS = [
-  {i:'item1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
-  {i:'layout1',x:4,y:0,w:8,h:10,isLayout:true,resizeHandles:'se'},
-  {i:'layout2',x:12,y:0,w:8,h:12,isLayout:true,resizeHandles:'se'},
-  {i:'item2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
-  {i:'item3',x:0,y:5,w:4,h:4,resizeHandles:'se'}
+  {i:'i1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
+  {i:'l1',x:4,y:0,w:8,h:10,isLayout:true,resizeHandles:'se'},
+  {i:'l2',x:12,y:0,w:8,h:12,isLayout:true,resizeHandles:'se'},
+  {i:'i2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
+  {i:'i3',x:0,y:5,w:4,h:4,resizeHandles:'se'}
 ];
 
 
@@ -57,10 +57,10 @@ export default class NestedLayout extends React.Component<Props, State> {
               className="text"
               title="This item is layout and cannot be removed or resized."
             >
-              Layout - {i}
+              Layout - {l.i}
             </span>
           ) : (
-            <span className="text">{i}</span>
+            <span className="text">{l.i}</span>
           )}
         </div>
       );
@@ -72,8 +72,6 @@ export default class NestedLayout extends React.Component<Props, State> {
       currentBreakpoint: breakpoint
     });
   };
-
-
 
   onResizeTypeChange: () => void = () => {
     const resizeHandles = this.state.resizeHandles === availableHandles ? ['se'] : availableHandles;
