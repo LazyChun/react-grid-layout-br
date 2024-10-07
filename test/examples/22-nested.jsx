@@ -25,8 +25,8 @@ const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 // 默认布局
 const DEFAULT_LAYOUTS = [
   {i:'i1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
-  {i:'l1',x:4,y:0,w:8,h:10,isLayout:true,resizeHandles:'se'},
-  {i:'l2',x:12,y:0,w:8,h:12,isLayout:true,resizeHandles:'se'},
+  {i:'l1',x:4,y:0,w:8,h:20,isLayout:true,resizeHandles:'se'},
+  {i:'l2',x:12,y:0,w:8,h:32,isLayout:false,resizeHandles:'se'},
   {i:'i2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
   {i:'i3',x:0,y:5,w:4,h:4,resizeHandles:'se'}
 ];
@@ -52,13 +52,19 @@ export default class NestedLayout extends React.Component<Props, State> {
     return _.map(this.state.layouts, function(l, i) {
       return (
         <div key={l.i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
-          {l.isLayout ? (
-            <span
-              className="text"
-              title="This item is layout and cannot be removed or resized."
-            >
-              Layout - {l.i}
-            </span>
+          {l.isLayout ? (<>
+            <ResponsiveReactGridLayout
+            className="layout"
+            style={{height:'100%',background:'green'}}
+            cols={{ lg: l.w, md: l.w , sm: l.w , xs: l.w ,xxs:l.w  }}
+            measureBeforeMount={false}
+            useCSSTransforms={true}
+            height
+          >
+           
+            <span>Layout {l.i}</span>
+          </ResponsiveReactGridLayout>
+          </>
           ) : (
             <span className="text">{l.i}</span>
           )}
@@ -113,7 +119,7 @@ export default class NestedLayout extends React.Component<Props, State> {
 
     // eslint-disable-next-line no-unused-vars
     return (
-      <div>
+      <div className={"nested===="}>
         <h1>Case For Nested</h1>
         <ResponsiveReactGridLayout
           className="layout"

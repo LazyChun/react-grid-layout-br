@@ -18,6 +18,12 @@ import {
   withLayoutItem
 } from "./utils";
 
+import {
+  isTopLayout,
+  NESTED_LAYOUT_CLASSNAME,
+  getCurrentLayoutLevel
+} from "./nestedUtils";
+
 import { calcXY } from "./calculateUtils";
 
 import GridItem from "./GridItem";
@@ -61,6 +67,7 @@ import type { Props, DefaultProps } from "./ReactGridLayoutPropTypes";
 // End Types
 
 const layoutClassName = "react-grid-layout";
+
 let isFirefox = false;
 // Try...catch will protect from navigator not existing (e.g. node) or a bad implementation of navigator
 try {
@@ -135,7 +142,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     oldResizeItem: null,
     resizing: false,
     droppingDOMNode: null,
-    children: []
+    children: [],
+    // 唯一layoutCalss
+    uniqueLayoutClass: layoutClassName + Math.random().toString()
   };
 
   dragEnterCounter: number = 0;
@@ -252,6 +261,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
+    console.log("dragStart========================AAGGGG", l);
+
     // Create placeholder (display only)
     const placeholder = {
       w: l.w,
@@ -314,6 +325,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       cols,
       allowOverlap
     );
+
+    console.log("drag===============================AGGG", l, placeholder);
 
     this.props.onDrag(layout, oldDragItem, l, placeholder, e, node);
 
@@ -557,6 +570,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       useCSSTransforms,
       transformScale
     } = this.props;
+
+    // return null;
 
     // {...this.state.activeDrag} is pretty slow, actually
     return (
@@ -826,11 +841,23 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   render(): React.Element<"div"> {
     const { className, style, isDroppable, innerRef } = this.props;
 
-    const mergedClassName = clsx(layoutClassName, className);
+    const mergedClassName = clsx(
+      layoutClassName,
+      className,
+      NESTED_LAYOUT_CLASSNAME,
+      this.state.uniqueLayoutClass
+    );
     const mergedStyle = {
       height: this.containerHeight(),
       ...style
     };
+
+    console.log(
+      "isTopLayout===========AGGGG",
+      this.state.uniqueLayoutClass,
+      isTopLayout(this.state.uniqueLayoutClass),
+      getCurrentLayoutLevel(this.state.uniqueLayoutClass)
+    );
 
     return (
       <div
