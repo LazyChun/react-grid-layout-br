@@ -269,6 +269,7 @@ export default class GridItem extends React.Component<Props, State> {
   moveDroppingItem(prevProps: Props) {
     const { droppingPosition } = this.props;
     if (!droppingPosition) return;
+    console.log("preProps--------------AAGGGGG", prevProps, this.props);
     const node = this.elementRef.current;
     // Can't find DOM node (are we unmounted?)
     if (!node) return;
@@ -492,6 +493,7 @@ export default class GridItem extends React.Component<Props, State> {
     if (!this.state.dragging) {
       throw new Error("onDrag called before onDragStart.");
     }
+
     let top = this.state.dragging.top + deltaY;
     let left = this.state.dragging.left + deltaX;
 
@@ -520,6 +522,15 @@ export default class GridItem extends React.Component<Props, State> {
 
     // Call callback with this data
     const { x, y } = calcXY(positionParams, top, left, w, h);
+
+    console.log(
+      "drag==============================AAGGGG",
+      // x,
+      // y,
+      e.layerX,
+      e.x,
+      e.offsetX
+    );
     return onDrag.call(this, i, x, y, {
       e,
       node,

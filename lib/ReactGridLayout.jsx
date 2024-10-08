@@ -23,7 +23,12 @@ import NestedWrapper from "./components/NestedWrapper";
 import {
   isTopLayout,
   NESTED_LAYOUT_CLASSNAME,
-  getCurrentLayoutLevel
+  getCurrentLayoutLevel,
+  clearMoveDragging,
+  isDragging,
+  updateMoveDragging,
+  getMoveDragging,
+  getMoveDraggingField
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -263,7 +268,11 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
-    console.log("dragStart========================AAGGGG", l);
+    console.log(
+      "dragStart========================AAGGGG",
+      e,
+      node.getBoundingClientRect()
+    );
 
     // Create placeholder (display only)
     const placeholder = {
@@ -279,6 +288,18 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       oldDragItem: cloneLayoutItem(l),
       oldLayout: layout,
       activeDrag: placeholder
+    });
+
+    // 抵用开始更新拖拽状态
+    clearMoveDragging();
+    const moveItemRect = node.getBoundingClientRect();
+    updateMoveDragging({
+      itemId: i,
+      targetUniqueLayoutClass: this.state.uniqueLayoutClass,
+      layerX: moveItemRect.left,
+      layerY: moveItemRect.top,
+      rectWidth: moveItemRect.width,
+      rectHeight: moveItemRect.height
     });
 
     return this.props.onDragStart(layout, l, l, null, e, node);
@@ -304,6 +325,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
+    console.log("draggingggg=============================", e, node);
+
     // Create placeholder (display only)
     const placeholder = {
       w: l.w,
@@ -328,8 +351,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       allowOverlap
     );
 
-    console.log("drag===============================AGGG", l, placeholder);
-
     this.props.onDrag(layout, oldDragItem, l, placeholder, e, node);
 
     this.setState({
@@ -337,6 +358,19 @@ export default class ReactGridLayout extends React.Component<Props, State> {
         ? layout
         : compact(layout, compactType(this.props), cols),
       activeDrag: placeholder
+    });
+
+    const moveItemRect = node.getBoundingClientRect();
+
+    console.log(
+      "drag============================adfasdfasd===AGGG",
+      moveItemRect
+    );
+    updateMoveDragging({
+      layerX: moveItemRect.left,
+      layerY: moveItemRect.top,
+      rectWidth: moveItemRect.width,
+      rectHeight: moveItemRect.height
     });
   };
 
@@ -392,6 +426,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     });
 
     this.onLayoutMaybeChanged(newLayout, oldLayout);
+    // 移动结束清除拖拽状态
+    clearMoveDragging(this.state.uniqueLayoutClass);
   };
 
   onLayoutMaybeChanged(newLayout: Layout, oldLayout: ?Layout) {
@@ -573,7 +609,13 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       transformScale
     } = this.props;
 
-    // return null;
+    // 如果当前layout不是目标layout 隐藏placeholder
+    if (
+      getMoveDraggingField("targetUniqueLayoutClass") !==
+      this.state.uniqueLayoutClass
+    ) {
+      return null;
+    }
 
     // {...this.state.activeDrag} is pretty slow, actually
     return (
@@ -867,7 +909,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     );
 
     return (
-      <NestedWrapper>
+      <NestedWrapper uniqueLayoutClass={this.state.uniqueLayoutClass}>
         <div
           ref={innerRef}
           className={mergedClassName}
