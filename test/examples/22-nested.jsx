@@ -52,7 +52,7 @@ export default class NestedLayout extends React.Component<Props, State> {
     return _.map(this.state.layouts, function(l, i) {
       return (
         <div key={l.i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
-          <div className={"draggableField"} style={{background:'purple'}}>drag field</div>
+          <div className={"draggableField"} style={{background:'purple',color:'white'}} draggable={false}  >Drag</div>
           {l.isLayout ? (<>
             <ResponsiveReactGridLayout
             className="layout"
@@ -61,6 +61,7 @@ export default class NestedLayout extends React.Component<Props, State> {
             measureBeforeMount={false}
             containerPadding={[0, 0]}
             rowHeight={16}
+            isBounded={false}
             useCSSTransforms={true}
             layouts={{lg:[{  x: 0,
               y: 0,
@@ -69,7 +70,7 @@ export default class NestedLayout extends React.Component<Props, State> {
               i: "c1",}]}}
           >
            
-            <div key={"c1"}>C {1}</div>
+            <div key={"c1"}>C{1}</div>
           </ResponsiveReactGridLayout>
           </>
           ) : (
@@ -139,6 +140,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           onDrop={this.onDrop}
           measureBeforeMount={false}
           useCSSTransforms={true}
+
           draggableHandle={'.draggableField'}
         >
           {this.generateDOM()}

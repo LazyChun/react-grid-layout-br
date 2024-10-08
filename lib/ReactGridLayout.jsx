@@ -18,6 +18,8 @@ import {
   withLayoutItem
 } from "./utils";
 
+import NestedWrapper from "./components/NestedWrapper";
+
 import {
   isTopLayout,
   NESTED_LAYOUT_CLASSNAME,
@@ -852,31 +854,38 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       ...style
     };
 
+    // console.log(
+    //   "isTopLayout===========AGGGG",
+    //   this.state.uniqueLayoutClass,
+    //   isTopLayout(this.state.uniqueLayoutClass),
+    //   getCurrentLayoutLevel(this.state.uniqueLayoutClass)
+    // );
+
     console.log(
-      "isTopLayout===========AGGGG",
-      this.state.uniqueLayoutClass,
-      isTopLayout(this.state.uniqueLayoutClass),
-      getCurrentLayoutLevel(this.state.uniqueLayoutClass)
+      "droppingPosition------------------------AAGGGG",
+      this.state.droppingPosition
     );
 
     return (
-      <div
-        ref={innerRef}
-        className={mergedClassName}
-        style={mergedStyle}
-        onDrop={isDroppable ? this.onDrop : noop}
-        onDragLeave={isDroppable ? this.onDragLeave : noop}
-        onDragEnter={isDroppable ? this.onDragEnter : noop}
-        onDragOver={isDroppable ? this.onDragOver : noop}
-      >
-        {React.Children.map(this.props.children, child =>
-          this.processGridItem(child)
-        )}
-        {isDroppable &&
-          this.state.droppingDOMNode &&
-          this.processGridItem(this.state.droppingDOMNode, true)}
-        {this.placeholder()}
-      </div>
+      <NestedWrapper>
+        <div
+          ref={innerRef}
+          className={mergedClassName}
+          style={mergedStyle}
+          onDrop={isDroppable ? this.onDrop : noop}
+          onDragLeave={isDroppable ? this.onDragLeave : noop}
+          onDragEnter={isDroppable ? this.onDragEnter : noop}
+          onDragOver={isDroppable ? this.onDragOver : noop}
+        >
+          {React.Children.map(this.props.children, child =>
+            this.processGridItem(child)
+          )}
+          {isDroppable &&
+            this.state.droppingDOMNode &&
+            this.processGridItem(this.state.droppingDOMNode, true)}
+          {this.placeholder()}
+        </div>
+      </NestedWrapper>
     );
   }
 }
