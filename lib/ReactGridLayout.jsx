@@ -302,7 +302,10 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       layerX: moveItemRect.left,
       layerY: moveItemRect.top,
       rectWidth: moveItemRect.width,
-      rectHeight: moveItemRect.height
+      rectHeight: moveItemRect.height,
+      droppingItemI: i,
+      droppingItemW: l.w,
+      droppingItemH: l.h
     });
 
     return this.props.onDragStart(layout, l, l, null, e, node);
@@ -612,7 +615,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       transformScale
     } = this.props;
 
-    if (isTopLayout(this.state.uniqueLayoutClass)) {
+    if (!isTopLayout(this.state.uniqueLayoutClass)) {
       console.log(
         "inLayout==========================GG=====KK",
         getMoveDraggingField("targetUniqueLayoutClass"),
@@ -781,7 +784,16 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       }
       return false;
     }
-    const finalDroppingItem = { ...droppingItem, ...onDragOverResult };
+    const finalDroppingItem = {
+      ...(!getMoveDraggingField("droppingItemI")
+        ? droppingItem
+        : {
+            i: getMoveDraggingField("droppingItemI"),
+            w: getMoveDraggingField("droppingItemW"),
+            h: getMoveDraggingField("droppingItemH")
+          }),
+      ...onDragOverResult
+    };
 
     const { layout } = this.state;
 

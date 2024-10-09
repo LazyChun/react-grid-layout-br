@@ -104,8 +104,15 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
             clientX: e.layerX,
             clientY: e.layerY
           });
+          console.log(
+            "dragover==========================",
+            e.layerX,
+            e.layerY,
+            currentLayoutEle
+          );
           currentLayoutEle.dispatchEvent(event);
         } else {
+          // 如果拖进后又拖出了该布局，重置目标布局样式
           if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT) {
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT

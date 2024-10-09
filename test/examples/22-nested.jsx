@@ -62,6 +62,7 @@ export default class NestedLayout extends React.Component<Props, State> {
             containerPadding={[0, 0]}
             rowHeight={16}
             isBounded={false}
+            isDroppable={true}
             useCSSTransforms={true}
             layouts={{lg:[{  x: 0,
               y: 0,
@@ -140,7 +141,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           onDrop={this.onDrop}
           measureBeforeMount={false}
           useCSSTransforms={true}
-
+          isDroppable={true}
           draggableHandle={'.draggableField'}
         >
           {this.generateDOM()}
