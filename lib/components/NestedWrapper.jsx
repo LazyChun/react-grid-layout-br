@@ -127,10 +127,19 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
             pointer.y > endPointer.y
         );
         if (outLayout) {
-          // 如果出了该布局，更新目标布局
-          updateMoveDragging({
-            [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
-          });
+          // 如果拖出了该布局，更新目标布局
+          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT) {
+            updateMoveDragging({
+              [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
+            });
+          }
+        } else {
+          // 如果回到了该布局，更新目标布局
+          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== uniqueLayoutClass) {
+            updateMoveDragging({
+              [TARGET_LAYOUT_KEY]: uniqueLayoutClass
+            });
+          }
         }
       }
     }
