@@ -95,6 +95,22 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
               [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
           }
+          // 发送拖拽事件
+          const currentLayoutEle =
+            document.getElementsByClassName(uniqueLayoutClass)?.[0];
+          const event = new DragEvent("dragover", {
+            bubbles: true,
+            cancelable: true,
+            clientX: e.layerX,
+            clientY: e.layerY
+          });
+          currentLayoutEle.dispatchEvent(event);
+        } else {
+          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT) {
+            updateMoveDragging({
+              [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
+            });
+          }
         }
       }
 
