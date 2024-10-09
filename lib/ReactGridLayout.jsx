@@ -17,6 +17,7 @@ import {
   synchronizeLayoutWithChildren,
   withLayoutItem
 } from "./utils";
+import _ from "lodash";
 
 import NestedWrapper from "./components/NestedWrapper";
 
@@ -30,7 +31,10 @@ import {
   getMoveDragging,
   getMoveDraggingField,
   LAYOUT_LEVEL_KEY,
-  ORIGIN_CLASS_KEY
+  ORIGIN_CLASS_KEY,
+  TARGET_LAYOUT_KEY,
+  CANCEL_DROP_CODE,
+  getDroppingItem
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -298,7 +302,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     updateMoveDragging({
       itemId: i,
       [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
-      targetUniqueLayoutClass: this.state.uniqueLayoutClass,
+      [TARGET_LAYOUT_KEY]: this.state.uniqueLayoutClass,
       layerX: moveItemRect.left,
       layerY: moveItemRect.top,
       rectWidth: moveItemRect.width,
@@ -615,19 +619,25 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       transformScale
     } = this.props;
 
-    if (!isTopLayout(this.state.uniqueLayoutClass)) {
+    if (isTopLayout(this.state.uniqueLayoutClass)) {
       console.log(
         "inLayout==========================GG=====KK",
-        getMoveDraggingField("targetUniqueLayoutClass"),
-        this.state.uniqueLayoutClass
+        getMoveDraggingField(TARGET_LAYOUT_KEY),
+        this.state.uniqueLayoutClass,
+        Math.random()
       );
     }
 
     // 如果当前layout不是目标layout 隐藏placeholder
     if (
-      getMoveDraggingField("targetUniqueLayoutClass") !==
-      this.state.uniqueLayoutClass
+      getMoveDraggingField(TARGET_LAYOUT_KEY) !== this.state.uniqueLayoutClass
     ) {
+      // 如果当前layout不是原始layout 清除拖拽进入计数
+      if (
+        this.state.uniqueLayoutClass !== getMoveDraggingField(ORIGIN_CLASS_KEY)
+      ) {
+        this.dragEnterCounter = 0;
+      }
       return null;
     }
 
@@ -851,9 +861,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   };
 
   removeDroppingPlaceholder: () => void = () => {
-    const { droppingItem, cols } = this.props;
+    const { droppingItem: dItem, cols } = this.props;
+    const droppingItem = getDroppingItem(dItem);
     const { layout } = this.state;
-
     const newLayout = compact(
       layout.filter(l => l.i !== droppingItem.i),
       compactType(this.props),
@@ -893,15 +903,18 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   onDrop: EventHandler = (e: Event) => {
     e.preventDefault(); // Prevent any browser native action
     e.stopPropagation();
-    const { droppingItem } = this.props;
+    const { droppingItem: dItem } = this.props;
     const { layout } = this.state;
+    const droppingItem = getDroppingItem(dItem);
     const item = layout.find(l => l.i === droppingItem.i);
 
     // reset dragEnter counter on drop
     this.dragEnterCounter = 0;
-
     this.removeDroppingPlaceholder();
-
+    // Cancel drop if user cancelled it
+    if (_.get(e, "detail") === CANCEL_DROP_CODE) {
+      return;
+    }
     this.props.onDrop(layout, item, e);
   };
 
@@ -925,6 +938,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     //   isTopLayout(this.state.uniqueLayoutClass),
     //   getCurrentLayoutLevel(this.state.uniqueLayoutClass)
     // );
+    if (isTopLayout(this.state.uniqueLayoutClass)) {
+      console.log("layout==========GDGHH=============", this.state.layout);
+    }
 
     return (
       <NestedWrapper uniqueLayoutClass={this.state.uniqueLayoutClass}>

@@ -14,7 +14,8 @@ import {
   ORIGIN_CLASS_KEY,
   isParentLayout,
   TARGET_LAYOUT_KEY,
-  NO_TARGET_LAYOUT
+  NO_TARGET_LAYOUT,
+  CANCEL_DROP_CODE
 } from "../nestedUtils";
 
 const getDragPointers = (x: Number, y: Number, w: Number, h: Number) => {
@@ -121,13 +122,13 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
         }
       }
 
-      console.log(
-        "mousemove==========================",
-        e.layerX,
-        e.layerY,
-        e,
-        uniqueLayoutClass
-      );
+      // console.log(
+      //   "mousemove==========================",
+      //   e.layerX,
+      //   e.layerY,
+      //   e,
+      //   uniqueLayoutClass
+      // );
     } else {
       // 判断是否拖出了当前目标布局
       const pointers = getBasePointerAndEndPointer(uniqueLayoutClass);
@@ -157,8 +158,17 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
             });
           }
         } else {
+          const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
           // 如果回到了该布局，更新目标布局
-          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== uniqueLayoutClass) {
+          if (targetLayoutClass !== uniqueLayoutClass) {
+            const event = new DragEvent("drop", {
+              bubbles: true,
+              cancelable: true,
+              detail: CANCEL_DROP_CODE
+            });
+            const targetLayoutEle =
+              document.getElementsByClassName(targetLayoutClass)?.[0];
+            targetLayoutEle?.dispatchEvent(event);
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
