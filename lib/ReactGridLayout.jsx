@@ -28,7 +28,9 @@ import {
   isDragging,
   updateMoveDragging,
   getMoveDragging,
-  getMoveDraggingField
+  getMoveDraggingField,
+  LAYOUT_LEVEL_KEY,
+  ORIGIN_CLASS_KEY
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -295,6 +297,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const moveItemRect = node.getBoundingClientRect();
     updateMoveDragging({
       itemId: i,
+      [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
       targetUniqueLayoutClass: this.state.uniqueLayoutClass,
       layerX: moveItemRect.left,
       layerY: moveItemRect.top,
@@ -609,6 +612,14 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       transformScale
     } = this.props;
 
+    if (isTopLayout(this.state.uniqueLayoutClass)) {
+      console.log(
+        "inLayout==========================GG=====KK",
+        getMoveDraggingField("targetUniqueLayoutClass"),
+        this.state.uniqueLayoutClass
+      );
+    }
+
     // 如果当前layout不是目标layout 隐藏placeholder
     if (
       getMoveDraggingField("targetUniqueLayoutClass") !==
@@ -902,11 +913,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     //   isTopLayout(this.state.uniqueLayoutClass),
     //   getCurrentLayoutLevel(this.state.uniqueLayoutClass)
     // );
-
-    console.log(
-      "droppingPosition------------------------AAGGGG",
-      this.state.droppingPosition
-    );
 
     return (
       <NestedWrapper uniqueLayoutClass={this.state.uniqueLayoutClass}>
