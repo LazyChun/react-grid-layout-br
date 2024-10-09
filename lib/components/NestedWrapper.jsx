@@ -9,7 +9,9 @@ import {
   getMoveDraggingField,
   getCurrentLayoutLevel,
   LAYOUT_LEVEL_KEY,
-  ORIGIN_CLASS_KEY
+  ORIGIN_CLASS_KEY,
+  isParentLayout,
+  TARGET_LAYOUT_KEY
 } from "../nestedUtils";
 
 const getDragPointers = (x: Number, y: Number, w: Number, h: Number) => {
@@ -33,7 +35,11 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
   useEventListener("mousemove", e => {
     // 拖拽启动布局
     const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
-    if (isDragging() && originUniqueClass !== uniqueLayoutClass) {
+    if (
+      isDragging() &&
+      originUniqueClass !== uniqueLayoutClass &&
+      !isParentLayout(uniqueLayoutClass)
+    ) {
       const currentLayoutEle =
         document.getElementsByClassName(uniqueLayoutClass)?.[0];
       if (currentLayoutEle) {
@@ -61,22 +67,20 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
             pointer.y < endPointer.y
         );
         if (inLayout) {
-          if (
-            getMoveDraggingField("targetUniqueLayoutClass") !==
-            uniqueLayoutClass
-          ) {
+          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== uniqueLayoutClass) {
             // const currentLayoutLevel = getCurrentLayoutLevel(uniqueLayoutClass);
             console.log(
               "inLayout==========================GG==========llllllll1111",
-              getMoveDraggingField("targetUniqueLayoutClass"),
-              uniqueLayoutClass
+              getMoveDraggingField(TARGET_LAYOUT_KEY),
+              uniqueLayoutClass,
+              isParentLayout(uniqueLayoutClass)
             );
             updateMoveDragging({
-              targetUniqueLayoutClass: uniqueLayoutClass
+              [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
             console.log(
               "inLayout==========================GG==========llllllll",
-              getMoveDraggingField("targetUniqueLayoutClass"),
+              getMoveDraggingField(TARGET_LAYOUT_KEY),
               uniqueLayoutClass
             );
           }
