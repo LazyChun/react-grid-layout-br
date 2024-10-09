@@ -2,6 +2,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useEventListener } from "ahooks";
+import _ from "lodash";
+
 import {
   isDragging,
   getMoveDragging,
@@ -11,7 +13,8 @@ import {
   LAYOUT_LEVEL_KEY,
   ORIGIN_CLASS_KEY,
   isParentLayout,
-  TARGET_LAYOUT_KEY
+  TARGET_LAYOUT_KEY,
+  NO_TARGET_LAYOUT
 } from "../nestedUtils";
 
 const getDragPointers = (x: Number, y: Number, w: Number, h: Number) => {
@@ -31,19 +34,45 @@ const getDragPointers = (x: Number, y: Number, w: Number, h: Number) => {
   ];
 };
 
+// 获取开始结束判断点位
+const getBasePointerAndEndPointer = (
+  uniqueLayoutClass: string
+): [{ x: Number, y: Number }, { x: Number, y: Number }] => {
+  const currentLayoutEle =
+    document.getElementsByClassName(uniqueLayoutClass)?.[0];
+  if (currentLayoutEle) {
+    const layoutRect = currentLayoutEle.getBoundingClientRect();
+
+    const itemX = layoutRect.left;
+    const itemY = layoutRect.top;
+    const itemW = layoutRect.width;
+    const itemH = layoutRect.height;
+    const basePointer = { x: itemX || 0, y: itemY || 0 };
+    const endPointer = { x: itemX + itemW, y: itemY + itemH };
+    return [basePointer, endPointer];
+  }
+  return [];
+};
+
 const NestedWrapper = ({ children, uniqueLayoutClass }) => {
   useEventListener("mousemove", e => {
     // 拖拽启动布局
     const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
+    // 不在拖拽状态下无响应
+    if (!isDragging()) {
+      return;
+    }
+    // 如果是目标布局的父布局，不响应
     if (
-      isDragging() &&
-      originUniqueClass !== uniqueLayoutClass &&
-      !isParentLayout(uniqueLayoutClass)
+      isParentLayout(uniqueLayoutClass) &&
+      getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT
     ) {
-      const currentLayoutEle =
-        document.getElementsByClassName(uniqueLayoutClass)?.[0];
-      if (currentLayoutEle) {
-        const layoutRect = currentLayoutEle.getBoundingClientRect();
+      return null;
+    }
+    if (originUniqueClass !== uniqueLayoutClass) {
+      const pointers = getBasePointerAndEndPointer(uniqueLayoutClass);
+      if (!_.isEmpty(pointers)) {
+        const [basePointer, endPointer] = pointers;
         const moveDragging = getMoveDragging();
         // 拖拽进入判断点
         const dragPointers = getDragPointers(
@@ -52,12 +81,6 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
           moveDragging.rectWidth,
           moveDragging.rectHeight
         );
-        const itemX = layoutRect.left;
-        const itemY = layoutRect.top;
-        const itemW = layoutRect.width;
-        const itemH = layoutRect.height;
-        const basePointer = { x: itemX || 0, y: itemY || 0 };
-        const endPointer = { x: itemX + itemW, y: itemY + itemH };
         // 是否已在该布局中
         const inLayout = !!dragPointers.find(
           pointer =>
@@ -68,24 +91,13 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
         );
         if (inLayout) {
           if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== uniqueLayoutClass) {
-            // const currentLayoutLevel = getCurrentLayoutLevel(uniqueLayoutClass);
-            console.log(
-              "inLayout==========================GG==========llllllll1111",
-              getMoveDraggingField(TARGET_LAYOUT_KEY),
-              uniqueLayoutClass,
-              isParentLayout(uniqueLayoutClass)
-            );
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
-            console.log(
-              "inLayout==========================GG==========llllllll",
-              getMoveDraggingField(TARGET_LAYOUT_KEY),
-              uniqueLayoutClass
-            );
           }
         }
       }
+
       console.log(
         "mousemove==========================",
         e.layerX,
@@ -93,6 +105,34 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
         e,
         uniqueLayoutClass
       );
+    } else {
+      // 判断是否拖出了当前目标布局
+      const pointers = getBasePointerAndEndPointer(uniqueLayoutClass);
+      if (!_.isEmpty(pointers)) {
+        const [basePointer, endPointer] = pointers;
+        const moveDragging = getMoveDragging();
+        // 拖拽离开判断点
+        const dragPointers = getDragPointers(
+          moveDragging.layerX,
+          moveDragging.layerY,
+          moveDragging.rectWidth,
+          moveDragging.rectHeight
+        );
+        // 是否已离开该布局
+        const outLayout = !!dragPointers.find(
+          pointer =>
+            pointer.x < basePointer.x ||
+            pointer.y < basePointer.y ||
+            pointer.x > endPointer.x ||
+            pointer.y > endPointer.y
+        );
+        if (outLayout) {
+          // 如果出了该布局，更新目标布局
+          updateMoveDragging({
+            [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
+          });
+        }
+      }
     }
   });
   return <>{children}</>;
