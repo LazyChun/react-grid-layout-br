@@ -78,14 +78,8 @@ const NestedWrapper = ({
     // 目标布局
     const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
 
-    if (isParentLayout(uniqueLayoutClass)) {
-      console.log(
-        "enterCounter=================222222",
-        uniqueLayoutClass,
-        targetLayoutClass,
-        activeDrag
-      );
-    }
+    console.log("targetLayoutClass=============AGGGG", targetLayoutClass);
+
     // TODO: 该方法存在问题，会导致targetLayoutClass为更新不了
     // 如果是目标布局的父布局，不响应
     if (
@@ -93,16 +87,16 @@ const NestedWrapper = ({
       targetLayoutClass !== NO_TARGET_LAYOUT
     ) {
       // 如果无需响应的布局中存在placeholder，清除掉
-      if (activeDrag) {
-        const event = new DragEvent("drop", {
-          bubbles: true,
-          cancelable: true,
-          detail: CANCEL_DROP_CODE
-        });
-        const currentLayoutEle =
-          document.getElementsByClassName(uniqueLayoutClass)?.[0];
-        currentLayoutEle?.dispatchEvent(event);
-      }
+      // if (activeDrag) {
+      //   const event = new DragEvent("drop", {
+      //     bubbles: true,
+      //     cancelable: true,
+      //     detail: CANCEL_DROP_CODE
+      //   });
+      //   const currentLayoutEle =
+      //     document.getElementsByClassName(uniqueLayoutClass)?.[0];
+      //   currentLayoutEle?.dispatchEvent(event);
+      // }
       return null;
     }
     if (originUniqueClass !== uniqueLayoutClass) {
@@ -153,6 +147,14 @@ const NestedWrapper = ({
             targetLayoutClass !== NO_TARGET_LAYOUT &&
             targetLayoutClass === uniqueLayoutClass
           ) {
+            const event = new DragEvent("drop", {
+              bubbles: true,
+              cancelable: true,
+              detail: CANCEL_DROP_CODE
+            });
+            const currentLayoutEle =
+              document.getElementsByClassName(uniqueLayoutClass)?.[0];
+            currentLayoutEle?.dispatchEvent(event);
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
             });
@@ -188,6 +190,17 @@ const NestedWrapper = ({
             pointer.x > endPointer.x ||
             pointer.y > endPointer.y
         );
+        if (isTopLayout(uniqueLayoutClass)) {
+          console.log(
+            "enterCounter=================222222",
+            uniqueLayoutClass,
+            targetLayoutClass,
+            originUniqueClass,
+            isParentLayout(uniqueLayoutClass),
+            outLayout
+          );
+        }
+
         if (outLayout) {
           // 如果拖出了该布局，更新目标布局
           if (targetLayoutClass !== NO_TARGET_LAYOUT) {
@@ -198,17 +211,19 @@ const NestedWrapper = ({
         } else {
           // 如果回到了该布局，更新目标布局
           if (targetLayoutClass !== uniqueLayoutClass) {
-            const event = new DragEvent("drop", {
-              bubbles: true,
-              cancelable: true,
-              detail: CANCEL_DROP_CODE
-            });
-            const targetLayoutEle =
-              document.getElementsByClassName(targetLayoutClass)?.[0];
-            targetLayoutEle?.dispatchEvent(event);
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
+            if (targetLayoutClass !== NO_TARGET_LAYOUT) {
+              const event = new DragEvent("drop", {
+                bubbles: true,
+                cancelable: true,
+                detail: CANCEL_DROP_CODE
+              });
+              const targetLayoutEle =
+                document.getElementsByClassName(targetLayoutClass)?.[0];
+              targetLayoutEle?.dispatchEvent(event);
+            }
           }
         }
       }
