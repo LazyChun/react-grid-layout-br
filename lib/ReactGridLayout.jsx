@@ -274,12 +274,13 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
-    console.log(
-      "dragStart========================AAGGGG",
-      e,
-      node.getBoundingClientRect()
-    );
-
+    if (isTopLayout(this.state.uniqueLayoutClass)) {
+      console.log(
+        "dragStart========================AAGGGG=======kkkkkkkkkkk",
+        e,
+        this.state.uniqueLayoutClass
+      );
+    }
     // Create placeholder (display only)
     const placeholder = {
       w: l.w,
@@ -296,21 +297,27 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       activeDrag: placeholder
     });
 
-    // 抵用开始更新拖拽状态
-    clearMoveDragging();
-    const moveItemRect = node.getBoundingClientRect();
-    updateMoveDragging({
-      itemId: i,
-      [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
-      [TARGET_LAYOUT_KEY]: this.state.uniqueLayoutClass,
-      layerX: moveItemRect.left,
-      layerY: moveItemRect.top,
-      rectWidth: moveItemRect.width,
-      rectHeight: moveItemRect.height,
-      droppingItemI: i,
-      droppingItemW: l.w,
-      droppingItemH: l.h
-    });
+    const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
+    if (
+      !originUniqueClass ||
+      originUniqueClass === this.state.uniqueLayoutClass
+    ) {
+      // 拖拽开始更新拖拽状态
+      clearMoveDragging();
+      const moveItemRect = node.getBoundingClientRect();
+      updateMoveDragging({
+        itemId: i,
+        [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
+        [TARGET_LAYOUT_KEY]: this.state.uniqueLayoutClass,
+        layerX: moveItemRect.left,
+        layerY: moveItemRect.top,
+        rectWidth: moveItemRect.width,
+        rectHeight: moveItemRect.height,
+        droppingItemI: i,
+        droppingItemW: l.w,
+        droppingItemH: l.h
+      });
+    }
 
     return this.props.onDragStart(layout, l, l, null, e, node);
   };
