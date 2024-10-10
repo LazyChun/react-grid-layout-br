@@ -102,8 +102,11 @@ export default class NestedLayout extends React.Component<Props, State> {
 
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
-     console.log("layouts=======00000",layout)
-     this.props.onLayoutChange(layout, layouts);
+     const newLayouts = layout.map(l=>{
+      const item = this.state.layouts.find(item=>item.i === l.i);
+      return {...item,...l}
+     })
+     this.setState({layouts:newLayouts})
   };
 
   onL1Change: OnLayoutChangeCallback = (layout, layouts) => {
