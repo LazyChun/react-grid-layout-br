@@ -190,6 +190,13 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
     if (originUniqueClass === uniqueLayoutClass) {
       if (originUniqueClass !== targetLayoutClass) {
         onRemoveItem(getDraggingId());
+        const event = new DragEvent("drop", {
+          bubbles: true,
+          cancelable: true
+        });
+        const targetLayoutEle =
+          document.getElementsByClassName(targetLayoutClass)?.[0];
+        targetLayoutEle?.dispatchEvent(event);
       }
     } else {
       console.log("goood");

@@ -443,6 +443,10 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       oldLayout: null
     });
 
+    if (isTopLayout(this.state.uniqueLayoutClass)) {
+      console.log("dragStop=============================AGGGG");
+    }
+
     this.onLayoutMaybeChanged(newLayout, oldLayout);
     // 移动结束清除拖拽状态
     clearMoveDragging(this.state.uniqueLayoutClass);
@@ -932,6 +936,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     if (_.get(e, "detail") === CANCEL_DROP_CODE) {
       return;
     }
+    clearMoveDragging();
     this.props.onDrop(layout, item, e);
   };
 

@@ -118,7 +118,7 @@ export default class NestedLayout extends React.Component<Props, State> {
   };
 
   onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (elemParams) => {
-    alert(`Element parameters: ${JSON.stringify(elemParams)}`);
+    console.log("onDrop================",elemParams)
   };
 
   onDragStop: (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem, placeholder: LayoutItem, e: Event) => void = (layout, oldItem, newItem, placeholder, e) => {
