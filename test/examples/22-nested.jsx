@@ -106,7 +106,7 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
      console.log("change==================AGGG",layout)
-     const newLayouts = layout.filter(l=>l.i !== '-1').map(l=>{
+     const newLayouts = layout.map(l=>{
       const item = this.state.layouts.find(item=>item.i === l.i);
       return {...item,...l}
      })
@@ -115,7 +115,7 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onL1Change: OnLayoutChangeCallback = (layout, layouts) => {
     console.log("onL1Change",layout,layouts)
-    const newLayouts = layout.filter(l=>l.i !== '-1').map(l=>{
+    const newLayouts = layout.map(l=>{
       const item = this.state.layouts.find(item=>item.i === l.i);
       return {...item,...l}
      }) 
@@ -180,7 +180,6 @@ export default class NestedLayout extends React.Component<Props, State> {
         <div
           className="droppable-element"
           draggable={true}
-          unselectable="on"
           // this is a hack for firefox
           // Firefox requires some kind of initialization
           // which we can do by adding this attribute
@@ -206,6 +205,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           isResizable={true}
           droppingItem={this.state.droppingItem}
           draggableHandle={'.draggableField'}
+          newItemId={"-1"}
         >
           {this.generateDOM()}
         </ResponsiveReactGridLayout>

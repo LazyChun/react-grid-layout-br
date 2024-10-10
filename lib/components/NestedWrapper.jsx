@@ -6,6 +6,7 @@ import _ from "lodash";
 
 import {
   isDragging,
+  isNewItem,
   isTopLayout,
   getMoveDragging,
   updateMoveDragging,
@@ -61,6 +62,10 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
   useEventListener("mousemove", e => {
     // 不在拖拽状态下无响应
     if (!isDragging()) {
+      return;
+    }
+    // 新建元素不响应
+    if (isNewItem()) {
       return;
     }
     // 拖拽启动布局
@@ -183,6 +188,10 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
   useEventListener("mouseup", e => {
     // 不在拖拽状态下无响应
     if (!isDragging()) {
+      return;
+    }
+    // 新建元素不响应
+    if (isNewItem()) {
       return;
     }
     // 拖拽启动布局

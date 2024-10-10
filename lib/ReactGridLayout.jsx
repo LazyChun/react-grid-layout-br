@@ -35,7 +35,8 @@ import {
   TARGET_LAYOUT_KEY,
   CANCEL_DROP_CODE,
   getDroppingItem,
-  getDraggingId
+  getDraggingId,
+  isNewItem
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -102,6 +103,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   static propTypes = ReactGridLayoutPropTypes;
 
   static defaultProps: DefaultProps = {
+    newItemId: "new",
     autoSize: true,
     cols: 12,
     className: "",
@@ -275,7 +277,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
-    if (isTopLayout(this.state.uniqueLayoutClass)) {
+    if (!isTopLayout(this.state.uniqueLayoutClass)) {
       console.log(
         "dragStart========================AAGGGG=======kkkkkkkkkkk",
         e,
@@ -307,9 +309,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       // 拖拽开始更新拖拽状态
       clearMoveDragging();
       const moveItemRect = node.getBoundingClientRect();
-      updateMoveDragging({
+      // 拖拽公共属性
+      const moveDragging = {
         itemId: i,
-        [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
         [TARGET_LAYOUT_KEY]: this.state.uniqueLayoutClass,
         layerX: moveItemRect.left,
         layerY: moveItemRect.top,
@@ -318,7 +320,20 @@ export default class ReactGridLayout extends React.Component<Props, State> {
         droppingItemI: i,
         droppingItemW: l.w,
         droppingItemH: l.h
-      });
+      };
+      if (i === this.props.newItemId) {
+        updateMoveDragging({
+          [ORIGIN_CLASS_KEY]: "OUTSIDE",
+          isNew: true,
+          ...moveDragging
+        });
+      } else {
+        updateMoveDragging({
+          [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
+          isNew: false,
+          ...moveDragging
+        });
+      }
     }
 
     return this.props.onDragStart(layout, l, l, null, e, node);
@@ -462,7 +477,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       if (draggingId && originUniqueClass !== this.state.uniqueLayoutClass) {
         this.props.onLayoutChange(newLayout.filter(l => l.i !== draggingId));
       } else {
-        this.props.onLayoutChange(newLayout);
+        this.props.onLayoutChange(
+          newLayout.filter(l => l.i !== this.props.newItemId)
+        );
       }
     }
   }
@@ -642,14 +659,16 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       console.log(
         "inLayout==========================GG=====KK",
         getMoveDraggingField(TARGET_LAYOUT_KEY),
-        this.state.uniqueLayoutClass,
-        Math.random()
+        getMoveDragging(),
+        this.state.uniqueLayoutClass
       );
     }
 
     // 如果当前layout不是目标layout 隐藏placeholder
     if (
-      getMoveDraggingField(TARGET_LAYOUT_KEY) !== this.state.uniqueLayoutClass
+      getMoveDraggingField(TARGET_LAYOUT_KEY) !==
+        this.state.uniqueLayoutClass &&
+      !isNewItem()
     ) {
       // 如果当前layout不是原始layout 清除拖拽进入计数
       if (
