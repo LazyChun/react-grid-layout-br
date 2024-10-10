@@ -993,6 +993,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       <NestedWrapper
         uniqueLayoutClass={this.state.uniqueLayoutClass}
         onRemoveItem={this.removeItem}
+        activeDrag={this.state.activeDrag}
       >
         <div
           ref={innerRef}

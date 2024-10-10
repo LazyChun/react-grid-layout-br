@@ -58,7 +58,12 @@ const getBasePointerAndEndPointer = (
   return [];
 };
 
-const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
+const NestedWrapper = ({
+  children,
+  uniqueLayoutClass,
+  onRemoveItem,
+  activeDrag
+}) => {
   useEventListener("mousemove", e => {
     // 不在拖拽状态下无响应
     if (!isDragging()) {
@@ -73,11 +78,31 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
     // 目标布局
     const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
 
+    if (isParentLayout(uniqueLayoutClass)) {
+      console.log(
+        "enterCounter=================222222",
+        uniqueLayoutClass,
+        targetLayoutClass,
+        activeDrag
+      );
+    }
+    // TODO: 该方法存在问题，会导致targetLayoutClass为更新不了
     // 如果是目标布局的父布局，不响应
     if (
       isParentLayout(uniqueLayoutClass) &&
       targetLayoutClass !== NO_TARGET_LAYOUT
     ) {
+      // 如果无需响应的布局中存在placeholder，清除掉
+      if (activeDrag) {
+        const event = new DragEvent("drop", {
+          bubbles: true,
+          cancelable: true,
+          detail: CANCEL_DROP_CODE
+        });
+        const currentLayoutEle =
+          document.getElementsByClassName(uniqueLayoutClass)?.[0];
+        currentLayoutEle?.dispatchEvent(event);
+      }
       return null;
     }
     if (originUniqueClass !== uniqueLayoutClass) {
@@ -229,7 +254,9 @@ NestedWrapper.propTypes = {
   // 唯一layoutClass
   uniqueLayoutClass: PropTypes.string,
   // 删除元素
-  onRemoveItem: PropTypes.func
+  onRemoveItem: PropTypes.func,
+  // 拖拽进入次数
+  activeDrag: PropTypes.bool
 };
 
 export default NestedWrapper;
