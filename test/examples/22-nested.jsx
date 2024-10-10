@@ -25,10 +25,10 @@ const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 // 默认布局
 const DEFAULT_LAYOUTS = [
   {i:'i1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
-  {i:'l2',x:12,y:0,w:8,h:32,isLayout:false,resizeHandles:'se'},
+  {i:'l2',x:12,y:0,w:8,h:32,resizeHandles:'se'},
   {i:'i2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
   {i:'i3',x:0,y:5,w:4,h:4,resizeHandles:'se'},
-  {i:'l1',x:4,y:0,w:8,h:20,isLayout:true,resizeHandles:'se'},
+  {i:'l1',x:4,y:0,w:8,h:20,resizeHandles:'se'},
 ];
 
 
@@ -47,23 +47,30 @@ export default class NestedLayout extends React.Component<Props, State> {
       y: 0,
       w: 4,
       h: 4,
-      i: "c1",}]
+      i: "c1",}],
+    l2Layouts:[
+    ]
   };
 
   componentDidMount() {
     this.setState({ mounted: true });
   }
 
-  generateDOM(): ReactChildren {
+  generateDOM(renderLayouts?: Layout,draggableHandle?: string): ReactChildren {
     const onL1Change = this.onL1Change.bind(this);
     const onL1Drop = this.onL1Drop.bind(this);
+    const onL2Change = this.onL2Change.bind(this);
+    const onL2Drop = this.onL2Drop.bind(this);
     const l1Layouts = this.state.l1Layouts;
+    const l2Layouts = this.state.l2Layouts;
+    const generateChildrenDOM = this.generateDOM.bind(this);
+    
     console.log("l1Layouts======GG",l1Layouts)
-    return _.map(this.state.layouts, function(l, i) {
+    return _.map(renderLayouts||this.state.layouts, function(l, i) {
       return (
-        <div key={l.i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
-          <div className={"draggableField"} style={{background:'purple',color:'white'}} draggable={false}  >Drag</div>
-          {l.isLayout ? (<>
+        <div key={l.i} style={{ background: l.i.startsWith('l') ? 'yellow' : undefined }} className={l.i.startsWith('l') ? "layout" : ""}>
+          <div className={draggableHandle||"draggableField"} style={{background:'purple',color:'white'}} draggable={false}  >Drag</div>
+          {l.i.startsWith('l') ? (<>
             <ResponsiveReactGridLayout
             className="layout"
             style={{height:'calc(100% - 21px)',background:'green',marginTop: 0}}
@@ -71,17 +78,17 @@ export default class NestedLayout extends React.Component<Props, State> {
             measureBeforeMount={false}
             containerPadding={[0, 0]}
             rowHeight={16}
-            onDrop={onL1Drop}
-            onLayoutChange={onL1Change}
+            onDrop={l.i === "l1" ? onL1Drop : onL2Drop}
+            onLayoutChange={l.i ==="l1"?onL1Change: onL2Change}
             isBounded={false}
             isDroppable={true}
             isDraggable={true}
             isResizable={true}
             useCSSTransforms={true}
-            layouts={{lg:l1Layouts}}
+            draggableHandle={'.draggableField'+l.i}
+            layouts={{lg:l.i === "l1"?l1Layouts:l2Layouts}}
           >
-           {l1Layouts.map(item=>(<div key={item.i}>{item.i}</div>))}
-            
+            {generateChildrenDOM(l.i === "l1"?l1Layouts:l2Layouts,'draggableField'+l.i)}   
           </ResponsiveReactGridLayout>
           </>
           ) : (
@@ -106,20 +113,18 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
      console.log("change==================AGGG",layout)
-     const newLayouts = layout.map(l=>{
-      const item = this.state.layouts.find(item=>item.i === l.i);
-      return {...item,...l}
-     })
-     this.setState({layouts:newLayouts})
+     this.setState({layouts:layout})
   };
 
   onL1Change: OnLayoutChangeCallback = (layout, layouts) => {
     console.log("onL1Change",layout,layouts)
-    const newLayouts = layout.map(l=>{
-      const item = this.state.layouts.find(item=>item.i === l.i);
-      return {...item,...l}
-     }) 
-    this.setState({l1Layouts:newLayouts})
+    this.setState({l1Layouts:layout})
+  }
+
+  onL2Change: OnLayoutChangeCallback = (layout, layouts) => {
+    console.log("onL2Change",layout,layouts)
+
+    this.setState({l2Layouts:layout})
   }
 
   onNewLayout: EventHandler = () => {
@@ -130,27 +135,34 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout) => {
     console.log("onDrop================",layout)
-    const newLayouts = layout.map(l=>{
-      const item = this.state.layouts.find(item=>item.i === l.i);
-      if(l.i === '-1') {
-        l.i = "i"+Math.floor(Math.random()*1000)
-      }
-      return {...item,...l}
-     })
-     this.setState({layouts:newLayouts, droppingItem:undefined})
+   
+     this.setState({layouts:layout, droppingItem:undefined})
   };
 
   onL1Drop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout, item, e) => {
     console.log("onDrop================L1",layout)
     const newLayouts = layout.map(l=>{
-      const item = this.state.l1Layouts.find(item=>item.i === l.i);
+      
       if(l.i === '-1') {
         l.i = "i"+Math.floor(Math.random()*1000)
       }
-      return {...item,...l}
+      return {...l}
      })
      this.setState({l1Layouts:newLayouts, droppingItem:undefined})
   }
+
+  onL2Drop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout, item, e) => {
+    console.log("onDrop================L1",layout)
+    const newLayouts = layout.map(l=>{
+     
+      if(l.i === '-1') {
+        l.i = "i"+Math.floor(Math.random()*1000)
+      }
+      return {...l}
+     })
+     this.setState({l2Layouts:newLayouts, droppingItem:undefined})
+  }
+
 
   onDragStop: (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem, placeholder: LayoutItem, e: Event) => void = (layout, oldItem, newItem, placeholder, e) => {
     console.log("layouts=======00000======DragStop",layout)
@@ -164,7 +176,6 @@ export default class NestedLayout extends React.Component<Props, State> {
         w: item.w,
         h: item.h,
         i: item.i,
-        isLayout:item.isLayout,
         resizeHandles:['se']
       };
     });
