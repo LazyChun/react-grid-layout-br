@@ -297,6 +297,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       activeDrag: placeholder
     });
 
+    // 对比拖拽源布局，防止多次重复设置
     const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
     if (
       !originUniqueClass ||
@@ -448,6 +449,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   };
 
   onLayoutMaybeChanged(newLayout: Layout, oldLayout: ?Layout) {
+    console.log("onLayoutMaybeChanged", newLayout, oldLayout);
     if (!oldLayout) oldLayout = this.state.layout;
 
     if (!deepEqual(oldLayout, newLayout)) {
@@ -867,6 +869,15 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     }
   };
 
+  // 删除元素
+  removeItem: (i: string) => void = i => {
+    const newLayout = this.state.layout.filter(l => l.i !== i);
+    const oldLayout = _.cloneDeep(this.state.layout);
+    this.setState({ layout: newLayout });
+    this.onLayoutMaybeChanged(newLayout, oldLayout);
+    this.removeDroppingPlaceholder();
+  };
+
   removeDroppingPlaceholder: () => void = () => {
     const { droppingItem: dItem, cols } = this.props;
     const droppingItem = getDroppingItem(dItem);
@@ -914,7 +925,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const { layout } = this.state;
     const droppingItem = getDroppingItem(dItem);
     const item = layout.find(l => l.i === droppingItem.i);
-
     // reset dragEnter counter on drop
     this.dragEnterCounter = 0;
     this.removeDroppingPlaceholder();
@@ -945,12 +955,15 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     //   isTopLayout(this.state.uniqueLayoutClass),
     //   getCurrentLayoutLevel(this.state.uniqueLayoutClass)
     // );
-    if (isTopLayout(this.state.uniqueLayoutClass)) {
+    if (!isTopLayout(this.state.uniqueLayoutClass)) {
       console.log("layout==========GDGHH=============", this.state.layout);
     }
 
     return (
-      <NestedWrapper uniqueLayoutClass={this.state.uniqueLayoutClass}>
+      <NestedWrapper
+        uniqueLayoutClass={this.state.uniqueLayoutClass}
+        onRemoveItem={this.removeItem}
+      >
         <div
           ref={innerRef}
           className={mergedClassName}

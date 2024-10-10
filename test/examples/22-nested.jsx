@@ -41,7 +41,12 @@ export default class NestedLayout extends React.Component<Props, State> {
     currentBreakpoint: "lg",
     resizeHandles: ['se'],
     mounted: false,
-    layouts:DEFAULT_LAYOUTS
+    layouts:DEFAULT_LAYOUTS,
+    l1Layouts:[{  x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+      i: "c1",}]
   };
 
   componentDidMount() {
@@ -49,6 +54,9 @@ export default class NestedLayout extends React.Component<Props, State> {
   }
 
   generateDOM(): ReactChildren {
+    const onL1Change = this.onL1Change.bind(this);
+    const l1Layouts = this.state.l1Layouts;
+    console.log("l1Layouts======GG",l1Layouts)
     return _.map(this.state.layouts, function(l, i) {
       return (
         <div key={l.i} style={{ background: l.isLayout ? 'yellow' : undefined }} className={l.isLayout ? "layout" : ""}>
@@ -61,19 +69,16 @@ export default class NestedLayout extends React.Component<Props, State> {
             measureBeforeMount={false}
             containerPadding={[0, 0]}
             rowHeight={16}
+            onLayoutChange={onL1Change}
             isBounded={false}
             isDroppable={true}
             isDraggable={true}
             isResizable={true}
             useCSSTransforms={true}
-            layouts={{lg:[{  x: 0,
-              y: 0,
-              w: 4,
-              h: 4,
-              i: "c1",}]}}
+            layouts={{lg:l1Layouts}}
           >
-           
-            <div key={"c1"}>C{1}</div>
+           {l1Layouts.map(item=>(<div key={item.i}>{item.i}</div>))}
+            
           </ResponsiveReactGridLayout>
           </>
           ) : (
@@ -101,6 +106,11 @@ export default class NestedLayout extends React.Component<Props, State> {
      this.props.onLayoutChange(layout, layouts);
   };
 
+  onL1Change: OnLayoutChangeCallback = (layout, layouts) => {
+    console.log("onL1Change",layout,layouts)
+    this.setState({l1Layouts:layout})
+  }
+
   onNewLayout: EventHandler = () => {
     this.setState({
       layouts: this.generateLayout(this.state.resizeHandles)
@@ -110,6 +120,10 @@ export default class NestedLayout extends React.Component<Props, State> {
   onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (elemParams) => {
     alert(`Element parameters: ${JSON.stringify(elemParams)}`);
   };
+
+  onDragStop: (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem, placeholder: LayoutItem, e: Event) => void = (layout, oldItem, newItem, placeholder, e) => {
+    console.log("layouts=======00000======DragStop",layout)
+  }
 
  generateLayout() {
     const layouts = _.map(this.state.layouts, function(item, i) {
@@ -141,6 +155,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           onBreakpointChange={this.onBreakpointChange}
           onLayoutChange={this.onLayoutChange}
           onDrop={this.onDrop}
+          onDragStop={this.onDragStop}
           measureBeforeMount={false}
           useCSSTransforms={true}
           isDroppable={true}

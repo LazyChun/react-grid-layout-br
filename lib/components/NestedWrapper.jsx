@@ -9,6 +9,7 @@ import {
   getMoveDragging,
   updateMoveDragging,
   getMoveDraggingField,
+  getDraggingId,
   getCurrentLayoutLevel,
   LAYOUT_LEVEL_KEY,
   ORIGIN_CLASS_KEY,
@@ -55,14 +56,14 @@ const getBasePointerAndEndPointer = (
   return [];
 };
 
-const NestedWrapper = ({ children, uniqueLayoutClass }) => {
+const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
   useEventListener("mousemove", e => {
-    // 拖拽启动布局
-    const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
     // 不在拖拽状态下无响应
     if (!isDragging()) {
       return;
     }
+    // 拖拽启动布局
+    const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
     // 如果是目标布局的父布局，不响应
     if (
       isParentLayout(uniqueLayoutClass) &&
@@ -177,13 +178,32 @@ const NestedWrapper = ({ children, uniqueLayoutClass }) => {
       }
     }
   });
+
+  useEventListener("mouseup", e => {
+    // 不在拖拽状态下无响应
+    if (!isDragging()) {
+      return;
+    }
+    // 拖拽启动布局
+    const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
+    const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
+    if (originUniqueClass === uniqueLayoutClass) {
+      if (originUniqueClass !== targetLayoutClass) {
+        onRemoveItem(getDraggingId());
+      }
+    } else {
+      console.log("goood");
+    }
+  });
   return <>{children}</>;
 };
 
 NestedWrapper.propTypes = {
   children: PropTypes.element,
   // 唯一layoutClass
-  uniqueLayoutClass: PropTypes.string
+  uniqueLayoutClass: PropTypes.string,
+  // 删除元素
+  onRemoveItem: PropTypes.func
 };
 
 export default NestedWrapper;
