@@ -458,7 +458,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
 
     if (!deepEqual(oldLayout, newLayout)) {
       const draggingId = getDraggingId();
-      if (draggingId) {
+      const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
+      if (draggingId && originUniqueClass !== this.state.uniqueLayoutClass) {
         this.props.onLayoutChange(newLayout.filter(l => l.i !== draggingId));
       } else {
         this.props.onLayoutChange(newLayout);
