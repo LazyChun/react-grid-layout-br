@@ -41,6 +41,7 @@ export default class NestedLayout extends React.Component<Props, State> {
     currentBreakpoint: "lg",
     resizeHandles: ['se'],
     mounted: false,
+    droppingItem:undefined,
     layouts:DEFAULT_LAYOUTS,
     l1Layouts:[{  x: 0,
       y: 0,
@@ -105,8 +106,7 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
      console.log("change==================AGGG",layout)
-   
-     const newLayouts = layout.map(l=>{
+     const newLayouts = layout.filter(l=>l.i !== '-1').map(l=>{
       const item = this.state.layouts.find(item=>item.i === l.i);
       return {...item,...l}
      })
@@ -115,7 +115,11 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   onL1Change: OnLayoutChangeCallback = (layout, layouts) => {
     console.log("onL1Change",layout,layouts)
-    this.setState({l1Layouts:layout})
+    const newLayouts = layout.filter(l=>l.i !== '-1').map(l=>{
+      const item = this.state.layouts.find(item=>item.i === l.i);
+      return {...item,...l}
+     }) 
+    this.setState({l1Layouts:newLayouts})
   }
 
   onNewLayout: EventHandler = () => {
@@ -128,18 +132,24 @@ export default class NestedLayout extends React.Component<Props, State> {
     console.log("onDrop================",layout)
     const newLayouts = layout.map(l=>{
       const item = this.state.layouts.find(item=>item.i === l.i);
+      if(l.i === '-1') {
+        l.i = "i"+Math.floor(Math.random()*1000)
+      }
       return {...item,...l}
      })
-     this.setState({layouts:newLayouts})
+     this.setState({layouts:newLayouts, droppingItem:undefined})
   };
 
   onL1Drop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout, item, e) => {
     console.log("onDrop================L1",layout)
     const newLayouts = layout.map(l=>{
       const item = this.state.l1Layouts.find(item=>item.i === l.i);
+      if(l.i === '-1') {
+        l.i = "i"+Math.floor(Math.random()*1000)
+      }
       return {...item,...l}
      })
-     this.setState({l1Layouts:newLayouts})
+     this.setState({l1Layouts:newLayouts, droppingItem:undefined})
   }
 
   onDragStop: (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem, placeholder: LayoutItem, e: Event) => void = (layout, oldItem, newItem, placeholder, e) => {
@@ -167,6 +177,18 @@ export default class NestedLayout extends React.Component<Props, State> {
     return (
       <div className={"nested===="}>
         <h1>Case For Nested</h1>
+        <div
+          className="droppable-element"
+          draggable={true}
+          unselectable="on"
+          // this is a hack for firefox
+          // Firefox requires some kind of initialization
+          // which we can do by adding this attribute
+          // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+          onDragStart={e =>{e.dataTransfer.setData("text/plain", "");this.setState({droppingItem:{i:'-1',w:4,h:4}})} }
+        >
+          Droppable Element (Drag me!)
+        </div>
         <ResponsiveReactGridLayout
           className="layout"
           rowHeight={16}
@@ -182,6 +204,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           isDroppable={true}
           isDraggable={true}
           isResizable={true}
+          droppingItem={this.state.droppingItem}
           draggableHandle={'.draggableField'}
         >
           {this.generateDOM()}
