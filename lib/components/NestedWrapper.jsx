@@ -70,10 +70,13 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
     }
     // 拖拽启动布局
     const originUniqueClass = getMoveDraggingField(ORIGIN_CLASS_KEY);
+    // 目标布局
+    const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
+
     // 如果是目标布局的父布局，不响应
     if (
       isParentLayout(uniqueLayoutClass) &&
-      getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT
+      targetLayoutClass !== NO_TARGET_LAYOUT
     ) {
       return null;
     }
@@ -98,7 +101,7 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
             pointer.y < endPointer.y
         );
         if (inLayout) {
-          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== uniqueLayoutClass) {
+          if (targetLayoutClass !== uniqueLayoutClass) {
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: uniqueLayoutClass
             });
@@ -121,7 +124,10 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
           currentLayoutEle.dispatchEvent(event);
         } else {
           // 如果拖进后又拖出了该布局，重置目标布局样式
-          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT) {
+          if (
+            targetLayoutClass !== NO_TARGET_LAYOUT &&
+            targetLayoutClass === uniqueLayoutClass
+          ) {
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
             });
@@ -159,13 +165,12 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
         );
         if (outLayout) {
           // 如果拖出了该布局，更新目标布局
-          if (getMoveDraggingField(TARGET_LAYOUT_KEY) !== NO_TARGET_LAYOUT) {
+          if (targetLayoutClass !== NO_TARGET_LAYOUT) {
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
             });
           }
         } else {
-          const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
           // 如果回到了该布局，更新目标布局
           if (targetLayoutClass !== uniqueLayoutClass) {
             const event = new DragEvent("drop", {
