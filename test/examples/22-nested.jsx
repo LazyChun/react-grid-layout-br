@@ -64,7 +64,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           {l.isLayout ? (<>
             <ResponsiveReactGridLayout
             className="layout"
-            style={{height:'100%',background:'green',marginTop: 0}}
+            style={{height:'calc(100% - 21px)',background:'green',marginTop: 0}}
             cols={{ lg: l.w, md: l.w , sm: l.w , xs: l.w ,xxs:l.w  }}
             measureBeforeMount={false}
             containerPadding={[0, 0]}
