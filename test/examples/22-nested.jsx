@@ -55,6 +55,7 @@ export default class NestedLayout extends React.Component<Props, State> {
 
   generateDOM(): ReactChildren {
     const onL1Change = this.onL1Change.bind(this);
+    const onL1Drop = this.onL1Drop.bind(this);
     const l1Layouts = this.state.l1Layouts;
     console.log("l1Layouts======GG",l1Layouts)
     return _.map(this.state.layouts, function(l, i) {
@@ -69,6 +70,7 @@ export default class NestedLayout extends React.Component<Props, State> {
             measureBeforeMount={false}
             containerPadding={[0, 0]}
             rowHeight={16}
+            onDrop={onL1Drop}
             onLayoutChange={onL1Change}
             isBounded={false}
             isDroppable={true}
@@ -102,6 +104,8 @@ export default class NestedLayout extends React.Component<Props, State> {
 
 
   onLayoutChange: OnLayoutChangeCallback = (layout, layouts) => {
+     console.log("change==================AGGG",layout)
+   
      const newLayouts = layout.map(l=>{
       const item = this.state.layouts.find(item=>item.i === l.i);
       return {...item,...l}
@@ -120,9 +124,23 @@ export default class NestedLayout extends React.Component<Props, State> {
     });
   };
 
-  onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (elemParams) => {
-    console.log("onDrop================",elemParams)
+  onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout) => {
+    console.log("onDrop================",layout)
+    const newLayouts = layout.map(l=>{
+      const item = this.state.layouts.find(item=>item.i === l.i);
+      return {...item,...l}
+     })
+     this.setState({layouts:newLayouts})
   };
+
+  onL1Drop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout, item, e) => {
+    console.log("onDrop================L1",layout)
+    const newLayouts = layout.map(l=>{
+      const item = this.state.l1Layouts.find(item=>item.i === l.i);
+      return {...item,...l}
+     })
+     this.setState({l1Layouts:newLayouts})
+  }
 
   onDragStop: (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem, placeholder: LayoutItem, e: Event) => void = (layout, oldItem, newItem, placeholder, e) => {
     console.log("layouts=======00000======DragStop",layout)

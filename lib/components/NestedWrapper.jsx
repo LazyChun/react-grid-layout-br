@@ -6,6 +6,7 @@ import _ from "lodash";
 
 import {
   isDragging,
+  isTopLayout,
   getMoveDragging,
   updateMoveDragging,
   getMoveDraggingField,
@@ -190,6 +191,10 @@ const NestedWrapper = ({ children, uniqueLayoutClass, onRemoveItem }) => {
     if (originUniqueClass === uniqueLayoutClass) {
       if (originUniqueClass !== targetLayoutClass) {
         onRemoveItem(getDraggingId());
+        console.log(
+          "drop=================GG======AGGG",
+          isTopLayout(uniqueLayoutClass)
+        );
         const event = new DragEvent("drop", {
           bubbles: true,
           cancelable: true

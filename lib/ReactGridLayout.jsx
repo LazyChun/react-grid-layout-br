@@ -34,7 +34,8 @@ import {
   ORIGIN_CLASS_KEY,
   TARGET_LAYOUT_KEY,
   CANCEL_DROP_CODE,
-  getDroppingItem
+  getDroppingItem,
+  getDraggingId
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -453,11 +454,15 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   };
 
   onLayoutMaybeChanged(newLayout: Layout, oldLayout: ?Layout) {
-    console.log("onLayoutMaybeChanged", newLayout, oldLayout);
     if (!oldLayout) oldLayout = this.state.layout;
 
     if (!deepEqual(oldLayout, newLayout)) {
-      this.props.onLayoutChange(newLayout);
+      const draggingId = getDraggingId();
+      if (draggingId) {
+        this.props.onLayoutChange(newLayout.filter(l => l.i !== draggingId));
+      } else {
+        this.props.onLayoutChange(newLayout);
+      }
     }
   }
 
