@@ -211,6 +211,7 @@ export default class NestedLayout extends React.Component<Props, State> {
           onDragStop={this.onDragStop}
           measureBeforeMount={false}
           useCSSTransforms={true}
+          isBounded={true}
           isDroppable={true}
           isDraggable={true}
           isResizable={true}
