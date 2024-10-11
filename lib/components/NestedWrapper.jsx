@@ -18,45 +18,10 @@ import {
   isParentLayout,
   TARGET_LAYOUT_KEY,
   NO_TARGET_LAYOUT,
-  CANCEL_DROP_CODE
+  CANCEL_DROP_CODE,
+  getDragPointers,
+  getBasePointerAndEndPointer
 } from "../nestedUtils";
-
-const getDragPointers = (x: Number, y: Number, w: Number, h: Number) => {
-  return [
-    { x, y },
-    { x: x + w / 5, y },
-    { x: x + (2 * w) / 5, y },
-    { x: x + (3 * w) / 5, y },
-    { x: x + (4 * w) / 5, y },
-    { x: x + w, y },
-    { x, y: y + h },
-    { x: x + w / 5, y: y + h },
-    { x: x + (2 * w) / 5, y: y + h },
-    { x: x + (3 * w) / 5, y: y + h },
-    { x: x + (4 * w) / 5, y: y + h },
-    { x: x + w, y: y + h }
-  ];
-};
-
-// 获取开始结束判断点位
-const getBasePointerAndEndPointer = (
-  uniqueLayoutClass: string
-): [{ x: Number, y: Number }, { x: Number, y: Number }] => {
-  const currentLayoutEle =
-    document.getElementsByClassName(uniqueLayoutClass)?.[0];
-  if (currentLayoutEle) {
-    const layoutRect = currentLayoutEle.getBoundingClientRect();
-
-    const itemX = layoutRect.left;
-    const itemY = layoutRect.top;
-    const itemW = layoutRect.width;
-    const itemH = layoutRect.height;
-    const basePointer = { x: itemX || 0, y: itemY || 0 };
-    const endPointer = { x: itemX + itemW, y: itemY + itemH };
-    return [basePointer, endPointer];
-  }
-  return [];
-};
 
 const NestedWrapper = ({
   children,

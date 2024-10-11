@@ -24,6 +24,7 @@ import NestedWrapper from "./components/NestedWrapper";
 import {
   isTopLayout,
   NESTED_LAYOUT_CLASSNAME,
+  BOUNDED_CLASSNAME,
   getCurrentLayoutLevel,
   clearMoveDragging,
   isDragging,
@@ -33,10 +34,12 @@ import {
   LAYOUT_LEVEL_KEY,
   ORIGIN_CLASS_KEY,
   TARGET_LAYOUT_KEY,
+  CLOSEST_BOUNDED_LAYOUT_KEY,
   CANCEL_DROP_CODE,
   getDroppingItem,
   getDraggingId,
-  isNewItem
+  isNewItem,
+  getClosestBoundedParentLayout
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -330,6 +333,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       } else {
         updateMoveDragging({
           [ORIGIN_CLASS_KEY]: this.state.uniqueLayoutClass,
+          [CLOSEST_BOUNDED_LAYOUT_KEY]: getClosestBoundedParentLayout(
+            this.state.uniqueLayoutClass
+          ),
           isNew: false,
           ...moveDragging
         });
@@ -972,7 +978,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       layoutClassName,
       className,
       NESTED_LAYOUT_CLASSNAME,
-      this.state.uniqueLayoutClass
+      this.state.uniqueLayoutClass,
+      this.props.isBounded ? BOUNDED_CLASSNAME : ""
     );
     const mergedStyle = {
       height: this.containerHeight(),

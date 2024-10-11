@@ -25,7 +25,7 @@ const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 // 默认布局
 const DEFAULT_LAYOUTS = [
   {i:'i1',x:0,y:0,w:4,h:4,resizeHandles:'se'},
-  {i:'l2',x:12,y:0,w:8,h:32,resizeHandles:'se'},
+  // {i:'l2',x:12,y:0,w:8,h:32,resizeHandles:'se'},
   {i:'i2',x:20,y:0,w:4,h:6,resizeHandles:'se'},
   {i:'i3',x:0,y:5,w:4,h:4,resizeHandles:'se'},
   {i:'l1',x:4,y:0,w:8,h:20,resizeHandles:'se'},
