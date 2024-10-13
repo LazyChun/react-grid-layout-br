@@ -507,11 +507,6 @@ export default class GridItem extends React.Component<Props, State> {
     // Boundary calculations; keeps items within the grid
     if (isBounded) {
       const { offsetParent } = node;
-      console.log(
-        "boundedParent==================AAAAAA",
-        node.height,
-        offsetParent
-      );
       if (offsetParent) {
         const { margin, rowHeight } = this.props;
         const bottomBoundary =
@@ -524,36 +519,15 @@ export default class GridItem extends React.Component<Props, State> {
         left = clamp(left, 0, rightBoundary);
       }
     } else {
-      const [newLeft, newTop] = getGridItemBoundedLeftAndTop(
-        left,
-        top,
-        e,
-        node
-      );
-      left = newLeft;
-      top = newTop;
-      //const boundedLayout = getMoveDraggingField(CLOSEST_BOUNDED_LAYOUT_KEY);
-
-      // if (boundedLayout) {
-      //   const { margin, rowHeight } = this.props;
-      //   console.log(
-      //     "boundedLayout======================AAGGGGG",
-      //     boundedLayout,
-      //     top,
-      //     left,
-      //     node,
-      //     node.clientHeight,
-      //     node.key
-      //   );
-      //   const bottomBoundary = boundedLayout.clientHeight - node.clientHeight;
-      //   // calcGridItemWHPx(h, rowHeight, margin[1]);
-      //   top = clamp(top, 0, bottomBoundary);
-
-      //   // const colWidth = calcGridColWidth(positionParams);
-      //   // const rightBoundary =
-      //   //   containerWidth - calcGridItemWHPx(w, colWidth, margin[0]);
-      //   // left = clamp(left, 0, rightBoundary);
-      // }
+      // TODO bounded限制暂时隐藏
+      // const [newLeft, newTop] = getGridItemBoundedLeftAndTop(
+      //   left,
+      //   top,
+      //   e,
+      //   node
+      // );
+      // left = newLeft;
+      // top = newTop;
     }
 
     const newPosition: PartialPosition = { top, left };
@@ -562,14 +536,6 @@ export default class GridItem extends React.Component<Props, State> {
     // Call callback with this data
     const { x, y } = calcXY(positionParams, top, left, w, h);
 
-    console.log(
-      "drag==============================AAGGGG",
-      // x,
-      // y,
-      e.layerX,
-      e.x,
-      e.offsetX
-    );
     return onDrag.call(this, i, x, y, {
       e,
       node,
