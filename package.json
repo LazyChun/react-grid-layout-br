@@ -1,5 +1,5 @@
 {
-  "name": "react-grid-layout-nested",
+  "name": "@lazychun/react-grid-layout-nested",
   "version": "1.0.0",
   "description": "A draggable and resizable grid layout with responsive breakpoints, for React.",
   "main": "index.js",
