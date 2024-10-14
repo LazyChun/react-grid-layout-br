@@ -25,6 +25,7 @@ import {
   isTopLayout,
   NESTED_LAYOUT_CLASSNAME,
   BOUNDED_CLASSNAME,
+  ITEM_CLASS_KEY,
   getCurrentLayoutLevel,
   clearMoveDragging,
   isDragging,
@@ -39,7 +40,8 @@ import {
   getDroppingItem,
   getDraggingId,
   isNewItem,
-  getClosestBoundedParentLayout
+  getClosestBoundedParentLayout,
+  isSelfOrParentLayoutDragging
 } from "./nestedUtils";
 
 import { calcXY } from "./calculateUtils";
@@ -315,6 +317,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       // 拖拽公共属性
       const moveDragging = {
         itemId: i,
+        [ITEM_CLASS_KEY]: `[${i}]`,
         [TARGET_LAYOUT_KEY]: this.state.uniqueLayoutClass,
         layerX: moveItemRect.left,
         layerY: moveItemRect.top,
@@ -972,7 +975,13 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   };
 
   render(): React.Element<"div"> {
-    const { className, style, isDroppable, innerRef } = this.props;
+    const { className, style, isDroppable: droppable, innerRef } = this.props;
+
+    let isDroppable = droppable;
+    // 如果自身或父组件在拖拽中，本身不能拖拽
+    if (isSelfOrParentLayoutDragging(this.state.uniqueLayoutClass)) {
+      isDroppable = false;
+    }
 
     const mergedClassName = clsx(
       layoutClassName,
@@ -1001,6 +1010,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
         uniqueLayoutClass={this.state.uniqueLayoutClass}
         onRemoveItem={this.removeItem}
         activeDrag={!!this.state.activeDrag}
+        isDroppable={isDroppable}
       >
         <div
           ref={innerRef}

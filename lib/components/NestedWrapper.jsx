@@ -20,22 +20,32 @@ import {
   NO_TARGET_LAYOUT,
   CANCEL_DROP_CODE,
   getDragPointers,
-  getBasePointerAndEndPointer
+  getBasePointerAndEndPointer,
+  isSelfOrParentLayoutDragging
 } from "../nestedUtils";
 
 const NestedWrapper = ({
   children,
   uniqueLayoutClass,
   onRemoveItem,
-  activeDrag
+  activeDrag,
+  isDroppable
 }) => {
   useEventListener("mousemove", e => {
+    // 不可拖拽状态下无响应
+    if (!isDroppable) {
+      return;
+    }
     // 不在拖拽状态下无响应
     if (!isDragging()) {
       return;
     }
     // 新建元素不响应
     if (isNewItem()) {
+      return;
+    }
+    // 本身在拖拽中，本身和子布局不响应
+    if (isSelfOrParentLayoutDragging(uniqueLayoutClass)) {
       return;
     }
     // 拖拽启动布局
@@ -188,12 +198,20 @@ const NestedWrapper = ({
   });
 
   useEventListener("mouseup", e => {
+    // 不可拖拽状态下无响应
+    if (!isDroppable) {
+      return;
+    }
     // 不在拖拽状态下无响应
     if (!isDragging()) {
       return;
     }
     // 新建元素不响应
     if (isNewItem()) {
+      return;
+    }
+    // 本身在拖拽中，本身和子布局不响应
+    if (isSelfOrParentLayoutDragging(uniqueLayoutClass)) {
       return;
     }
     // 拖拽启动布局
@@ -228,7 +246,9 @@ NestedWrapper.propTypes = {
   // 删除元素
   onRemoveItem: PropTypes.func,
   // 拖拽进入次数
-  activeDrag: PropTypes.bool
+  activeDrag: PropTypes.bool,
+  // 是否可拖拽
+  isDroppable: PropTypes.bool
 };
 
 export default NestedWrapper;

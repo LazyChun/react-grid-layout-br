@@ -67,6 +67,7 @@ export default class NestedLayout extends React.Component<Props, State> {
     
     console.log("l1Layouts======GG",l1Layouts)
     return _.map(renderLayouts||this.state.layouts, function(l, i) {
+      //const isDraggable = l.i === "l2";
       return (
         <div key={l.i} style={{ background: l.i.startsWith('l') ? 'yellow' : undefined }} className={l.i.startsWith('l') ? "layout" : ""}>
           <div className={draggableHandle||"draggableField"} style={{background:'purple',color:'white'}} draggable={false}  >Drag</div>
