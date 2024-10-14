@@ -43,8 +43,6 @@ const NestedWrapper = ({
     // 目标布局
     const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
 
-    console.log("targetLayoutClass=============AGGGG", targetLayoutClass);
-
     // TODO: 该方法存在问题，会导致targetLayoutClass为更新不了
     // 如果是目标布局的父布局，不响应
     if (
@@ -52,16 +50,16 @@ const NestedWrapper = ({
       targetLayoutClass !== NO_TARGET_LAYOUT
     ) {
       // 如果无需响应的布局中存在placeholder，清除掉
-      // if (activeDrag) {
-      //   const event = new DragEvent("drop", {
-      //     bubbles: true,
-      //     cancelable: true,
-      //     detail: CANCEL_DROP_CODE
-      //   });
-      //   const currentLayoutEle =
-      //     document.getElementsByClassName(uniqueLayoutClass)?.[0];
-      //   currentLayoutEle?.dispatchEvent(event);
-      // }
+      if (activeDrag) {
+        const event = new DragEvent("drop", {
+          bubbles: true,
+          cancelable: true,
+          detail: CANCEL_DROP_CODE
+        });
+        const currentLayoutEle =
+          document.getElementsByClassName(uniqueLayoutClass)?.[0];
+        currentLayoutEle?.dispatchEvent(event);
+      }
       return null;
     }
     if (originUniqueClass !== uniqueLayoutClass) {
@@ -126,14 +124,6 @@ const NestedWrapper = ({
           }
         }
       }
-
-      // console.log(
-      //   "mousemove==========================",
-      //   e.layerX,
-      //   e.layerY,
-      //   e,
-      //   uniqueLayoutClass
-      // );
     } else {
       // 判断是否拖出了当前目标布局
       const pointers = getBasePointerAndEndPointer(uniqueLayoutClass);
@@ -168,7 +158,10 @@ const NestedWrapper = ({
 
         if (outLayout) {
           // 如果拖出了该布局，更新目标布局
-          if (targetLayoutClass !== NO_TARGET_LAYOUT) {
+          if (
+            targetLayoutClass !== NO_TARGET_LAYOUT &&
+            targetLayoutClass === uniqueLayoutClass
+          ) {
             updateMoveDragging({
               [TARGET_LAYOUT_KEY]: NO_TARGET_LAYOUT
             });
