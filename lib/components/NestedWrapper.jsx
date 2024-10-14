@@ -122,15 +122,9 @@ const NestedWrapper = ({
             clientX: e.layerX,
             clientY: e.layerY
           });
-          console.log(
-            "dragover==========================",
-            e.layerX,
-            e.layerY,
-            currentLayoutEle
-          );
+
           currentLayoutEle.dispatchEvent(event);
         } else {
-          console.log("dropp=============AGGGG0", targetLayoutClass);
           // 如果拖进后又拖出了该布局，重置目标布局样式
           if (
             targetLayoutClass !== NO_TARGET_LAYOUT &&
@@ -171,16 +165,16 @@ const NestedWrapper = ({
             pointer.x > endPointer.x ||
             pointer.y > endPointer.y
         );
-        if (isTopLayout(uniqueLayoutClass)) {
-          console.log(
-            "enterCounter=================222222",
-            uniqueLayoutClass,
-            targetLayoutClass,
-            originUniqueClass,
-            isParentLayout(uniqueLayoutClass),
-            outLayout
-          );
-        }
+        // if (isTopLayout(uniqueLayoutClass)) {
+        //   console.log(
+        //     "enterCounter=================222222",
+        //     uniqueLayoutClass,
+        //     targetLayoutClass,
+        //     originUniqueClass,
+        //     isParentLayout(uniqueLayoutClass),
+        //     outLayout
+        //   );
+        // }
 
         if (outLayout) {
           // 如果拖出了该布局，更新目标布局
@@ -237,10 +231,6 @@ const NestedWrapper = ({
     if (originUniqueClass === uniqueLayoutClass) {
       if (originUniqueClass !== targetLayoutClass) {
         onRemoveItem(getDraggingId());
-        console.log(
-          "drop=================GG======AGGG",
-          isTopLayout(uniqueLayoutClass)
-        );
         const event = new DragEvent("drop", {
           bubbles: true,
           cancelable: true

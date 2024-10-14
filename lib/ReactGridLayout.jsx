@@ -282,13 +282,13 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
-    if (!isTopLayout(this.state.uniqueLayoutClass)) {
-      console.log(
-        "dragStart========================AAGGGG=======kkkkkkkkkkk",
-        e,
-        this.state.uniqueLayoutClass
-      );
-    }
+    // if (!isTopLayout(this.state.uniqueLayoutClass)) {
+    //   console.log(
+    //     "dragStart========================AAGGGG=======kkkkkkkkkkk",
+    //     e,
+    //     this.state.uniqueLayoutClass
+    //   );
+    // }
     // Create placeholder (display only)
     const placeholder = {
       w: l.w,
@@ -368,8 +368,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
-    console.log("draggingggg=============================", e, node);
-
     // Create placeholder (display only)
     const placeholder = {
       w: l.w,
@@ -405,10 +403,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
 
     const moveItemRect = node.getBoundingClientRect();
 
-    console.log(
-      "drag============================adfasdfasd===AGGG",
-      moveItemRect
-    );
     updateMoveDragging({
       layerX: moveItemRect.left,
       layerY: moveItemRect.top,
@@ -467,10 +461,6 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       oldDragItem: null,
       oldLayout: null
     });
-
-    if (isTopLayout(this.state.uniqueLayoutClass)) {
-      console.log("dragStop=============================AGGGG");
-    }
 
     this.onLayoutMaybeChanged(newLayout, oldLayout);
     // 移动结束清除拖拽状态
@@ -664,14 +654,14 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       transformScale
     } = this.props;
 
-    if (isTopLayout(this.state.uniqueLayoutClass)) {
-      console.log(
-        "inLayout==========================GG=====KK",
-        getMoveDraggingField(TARGET_LAYOUT_KEY),
-        getMoveDragging(),
-        this.state.uniqueLayoutClass
-      );
-    }
+    // if (isTopLayout(this.state.uniqueLayoutClass)) {
+    //   console.log(
+    //     "inLayout==========================GG=====KK",
+    //     getMoveDraggingField(TARGET_LAYOUT_KEY),
+    //     getMoveDragging(),
+    //     this.state.uniqueLayoutClass
+    //   );
+    // }
 
     // 如果当前layout不是目标layout 隐藏placeholder
     if (
@@ -1001,9 +991,9 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     //   isTopLayout(this.state.uniqueLayoutClass),
     //   getCurrentLayoutLevel(this.state.uniqueLayoutClass)
     // );
-    if (!isTopLayout(this.state.uniqueLayoutClass)) {
-      console.log("layout==========GDGHH=============", this.state.layout);
-    }
+    // if (!isTopLayout(this.state.uniqueLayoutClass)) {
+    //   console.log("layout==========GDGHH=============", this.state.layout);
+    // }
 
     return (
       <NestedWrapper
