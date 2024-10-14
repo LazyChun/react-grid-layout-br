@@ -135,9 +135,16 @@ export default class NestedLayout extends React.Component<Props, State> {
   };
 
   onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout) => {
-    console.log("onDrop================",layout)
+    console.log("onDrop================GGDAKKKK",layout)
+    const newLayouts = layout.map(l=>{
+      
+      if(l.i === '-1') {
+        l.i = "i"+Math.floor(Math.random()*1000)
+      }
+      return {...l}
+     })
    
-     this.setState({layouts:layout, droppingItem:undefined})
+     this.setState({layouts:newLayouts, droppingItem:undefined})
   };
 
   onL1Drop: (layout: Layout, item: ?LayoutItem, e: Event) => void = (layout, item, e) => {
