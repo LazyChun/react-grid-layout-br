@@ -43,7 +43,6 @@ const NestedWrapper = ({
     // 目标布局
     const targetLayoutClass = getMoveDraggingField(TARGET_LAYOUT_KEY);
 
-    // TODO: 该方法存在问题，会导致targetLayoutClass为更新不了
     // 如果是目标布局的父布局，不响应
     if (
       isParentLayout(uniqueLayoutClass) &&
