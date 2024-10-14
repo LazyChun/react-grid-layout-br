@@ -71,6 +71,22 @@ const NestedWrapper = ({
       }
       return null;
     }
+    // 如果无需响应的布局中存在placeholder，清除掉
+    if (
+      activeDrag &&
+      targetLayoutClass !== NO_TARGET_LAYOUT &&
+      targetLayoutClass !== uniqueLayoutClass &&
+      uniqueLayoutClass !== originUniqueClass
+    ) {
+      const event = new DragEvent("drop", {
+        bubbles: true,
+        cancelable: true,
+        detail: CANCEL_DROP_CODE
+      });
+      const currentLayoutEle =
+        document.getElementsByClassName(uniqueLayoutClass)?.[0];
+      currentLayoutEle?.dispatchEvent(event);
+    }
     if (originUniqueClass !== uniqueLayoutClass) {
       const pointers = getBasePointerAndEndPointer(uniqueLayoutClass);
       if (!_.isEmpty(pointers)) {
@@ -114,6 +130,7 @@ const NestedWrapper = ({
           );
           currentLayoutEle.dispatchEvent(event);
         } else {
+          console.log("dropp=============AGGGG0", targetLayoutClass);
           // 如果拖进后又拖出了该布局，重置目标布局样式
           if (
             targetLayoutClass !== NO_TARGET_LAYOUT &&
