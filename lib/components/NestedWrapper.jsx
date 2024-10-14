@@ -50,7 +50,7 @@ const NestedWrapper = ({
       targetLayoutClass !== NO_TARGET_LAYOUT
     ) {
       // 如果无需响应的布局中存在placeholder，清除掉
-      if (activeDrag) {
+      if (activeDrag && uniqueLayoutClass !== originUniqueClass) {
         const event = new DragEvent("drop", {
           bubbles: true,
           cancelable: true,
