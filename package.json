@@ -1,8 +1,9 @@
 {
-  "name": "react-grid-layout",
-  "version": "1.4.4",
+  "name": "react-grid-layout-nested",
+  "version": "1.0.0",
   "description": "A draggable and resizable grid layout with responsive breakpoints, for React.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "make lint",
     "test": "make test",
