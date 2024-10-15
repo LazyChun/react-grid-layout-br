@@ -17,7 +17,8 @@
     "validate": "npm ls",
     "flow": "flow",
     "fmt": "prettier --write .",
-    "fmt:check": "prettier --check ."
+    "fmt:check": "prettier --check .",
+    "p": "npm build && npm publish --access public"
   },
   "repository": {
     "type": "git",
