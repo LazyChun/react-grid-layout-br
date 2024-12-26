@@ -7,18 +7,16 @@
   "scripts": {
     "lint": "make lint",
     "test": "make test",
-    "mbuild": "make build",
     "build": "webpack --config ./webpack.config.js",
     "build-example": "make build-example",
     "view-example": "make view-example",
     "mdev": "make dev",
     "start": "webpack serve --config webpack-dev-server.config.js",
-    "prepublishOnly": "make build",
     "validate": "npm ls",
     "flow": "flow",
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check .",
-    "p": "npm build && npm publish --access public"
+    "p": "npm run build && npm publish --access public"
   },
   "repository": {
     "type": "git",
