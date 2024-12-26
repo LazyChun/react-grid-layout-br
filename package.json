@@ -1,13 +1,13 @@
 {
   "name": "@lazychun/react-grid-layout-nested",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A draggable and resizable grid layout with responsive breakpoints, for React.",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "lint": "make lint",
     "test": "make test",
-    "build": "webpack --config ./webpack.config.js",
+    "build": "babel --out-dir ./build ./lib && webpack --config ./webpack.config.js",
     "build-example": "make build-example",
     "view-example": "make view-example",
     "mdev": "make dev",

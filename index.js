@@ -1,7 +1,8 @@
-module.exports = require("./lib/ReactGridLayout").default;
-module.exports.utils = require("./lib/utils");
-module.exports.calculateUtils = require("./lib/calculateUtils");
-module.exports.Responsive = require("./lib/ResponsiveReactGridLayout").default;
-module.exports.Responsive.utils = require("./lib/responsiveUtils");
+module.exports = require("./build/ReactGridLayout").default;
+module.exports.utils = require("./build/utils");
+module.exports.calculateUtils = require("./build/calculateUtils");
+module.exports.Responsive =
+  require("./build/ResponsiveReactGridLayout").default;
+module.exports.Responsive.utils = require("./build/responsiveUtils");
 module.exports.WidthProvider =
-  require("./lib/components/WidthProvider").default;
+  require("./build/components/WidthProvider").default;
